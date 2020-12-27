@@ -34,12 +34,23 @@ print(df.columns)
 print(df['license_type'].value_counts())
 print(df['base_type'].value_counts())
 print(df['reason'].value_counts())
-print(df['base_name'].value_counts())
+print(df['base_name'].value_counts().nlargest(10))
+
+#Mappings
+base_type_mapping = {'LIVERY': 1,
+                     'BLACK-CAR': 2,
+                     'LUXURY': 3}
 
 #Strip last five characters of 'base address' column and convert to int to acquire zip code
 df['zip_code'] = [int(x.strip()[-5:]) for x in df['base_address']]
 zip_codes = df['zip_code'].value_counts()[:10].index
 num_cars = df['zip_code'].value_counts()[:10]
+
+#Use base type mapping to create numerical column in df for base type
+df['base_code'] = df.base_type.map(base_type_mapping)
+
+print(df.base_code.value_counts())
+
 
 print(zip_codes)
 
@@ -72,7 +83,7 @@ print("Test score:", model.score(x_test, y_test))
 y_predict = model.predict(x_test)
 
 #Scatter plot of actual vs predicted vehicle year using zip code
-plt.scatter(y_test, y_predict, alpha=0.2)
+plt.scatter(sorted(y_test), y_predict, alpha=0.2)
 plt.xlabel('Actual Vehicle Year')
 plt.xticks(rotation=45)
 plt.ylabel('Predicted Vehicle Year')
@@ -91,4 +102,4 @@ plt.xticks(rotation=45)
 ax.set_xlabel('Zip Code')
 ax.set_ylabel('Number of Cars')
 
-plt.show()
+#plt.show()
